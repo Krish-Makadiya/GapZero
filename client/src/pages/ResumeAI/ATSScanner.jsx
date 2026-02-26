@@ -141,6 +141,7 @@ const ATSScanner = () => {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
     const [jobDescription, setJobDescription] = useState("");
+    const [resumeRawData, setResumeRawData] = useState("");
     const location = useLocation();
 
     useEffect(() => {
@@ -191,7 +192,8 @@ const ATSScanner = () => {
         try {
             const response = await axios.post('http://localhost:5678/webhook/d3ba70b8-fc36-4be6-b4f2-01817cfdf1ab', formData);
             console.log(response.data[0]);
-            setResult(response.data[0]);
+            setResult(response.data[0].json);
+            setResumeRawData(response.data[0].resumeRawData);
         } catch (error) {
             console.error('Error scanning resume:', error);
         } finally {
@@ -511,9 +513,69 @@ const ATSScanner = () => {
                             </CardContent>
                         </Card>
 
-                        <div className="flex justify-center pt-8">
+                        <div className="flex justify-center pt-8 gap-4">
                             <Button variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={resetScanner}>
                                 Upload another resume
+                            </Button>
+                            <Button
+                                className="bg-linear-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/20"
+                                onClick={async () => {
+                                    try {
+                                        // 1. Prepare Data
+                                        const payload = {
+                                            improvementPlan: result.improvementPlan,
+                                            quantificationScore: result.quantificationAnalysis.score,
+                                            fluffPhrases: result.fluffPhrases,
+                                            resumeContent: resumeRawData,
+                                        };
+
+                                        // 2. Store in Version History (Local Storage for now)
+                                        const historyItem = {
+                                            id: crypto.randomUUID(),
+                                            name: jobDescription.substring(0, 50) + (jobDescription.length > 50 ? "..." : ""), // Use substring as name might be long
+                                            fullJobDescription: jobDescription,
+                                            date: new Date().toISOString(),
+                                            ...payload
+                                        };
+
+                                        const existingHistory = JSON.parse(localStorage.getItem('resumeHistory') || '[]');
+                                        localStorage.setItem('resumeHistory', JSON.stringify([historyItem, ...existingHistory]));
+
+                                        alert("Resume sent for refinement!");
+                                        // 3. Send to Webhook
+                                        // 3. Send to Webhook and Download Binary
+                                        const res = await axios.post(
+                                            "http://localhost:5678/webhook/48f54861-10d7-4842-be8a-1d8d6adc0c10",
+                                            payload,
+                                            { responseType: 'blob' } // Important for binary files
+                                        );
+
+                                        console.log("Webhook response:", res);
+
+                                        // Create a blob from the response data
+                                        const blob = new Blob([res.data], { type: 'application/pdf' });
+
+                                        // Create a link element and trigger download
+                                        const url = window.URL.createObjectURL(blob);
+                                        const link = document.createElement('a');
+                                        link.href = url;
+                                        link.setAttribute('download', 'refined_resume.pdf'); // Set desired filename
+                                        document.body.appendChild(link);
+                                        link.click();
+
+                                        // Cleanup
+                                        link.parentNode.removeChild(link);
+                                        window.URL.revokeObjectURL(url);
+
+
+                                    } catch (error) {
+                                        console.error("Error refining resume:", error);
+                                        alert("Failed to send resume for refinement.");
+                                    }
+                                }}
+                            >
+                                <Zap className="mr-2 h-4 w-4" />
+                                Refine Resume
                             </Button>
                         </div>
 

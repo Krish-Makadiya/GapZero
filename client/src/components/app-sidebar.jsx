@@ -9,9 +9,11 @@ import {
     GraduationCap,
     History,
     Map,
+    Phone,
     PieChart,
     Settings2,
-    SquareTerminal
+    SquareTerminal,
+    Send
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -64,18 +66,33 @@ const data = {
                     title: "ATS Scanner",
                     url: "/dashboard/ats-scanner",
                 },
-                // {
-                //     title: "Resume Builder",
-                //     url: "/dashboard/resume-builder",
-                // },
+                {
+                    title: "Resume Builder",
+                    url: "/dashboard/resume-builder",
+                },
                 // {
                 //     title: "Cover Letter Gen",
                 //     url: "/dashboard/cover-letters",
                 // },
-                // {
-                //     title: "Version History",
-                //     url: "/dashboard/resume-versions",
-                // }
+                {
+                    title: "Version History",
+                    url: "/dashboard/resume-versions",
+                }
+            ],
+        },
+        {
+            title: "Cold Outreach",
+            url: "#",
+            icon: Send,
+            items: [
+                {
+                    title: "Your Outreachs",
+                    url: "/dashboard/cold-outreach/your-outreachs",
+                },
+                {
+                    title: "Cold Emails Template",
+                    url: "/dashboard/cold-outreach/templates",
+                },
             ],
         },
         {
@@ -109,6 +126,25 @@ const data = {
                 {
                     title: "Job Preferences",
                     url: "/dashboard/job-preferences",
+                },
+            ],
+        },
+        {
+            title: "Resources",
+            url: "#",
+            icon: BookOpen,
+            items: [
+                {
+                    title: "Roadmaps",
+                    url: "/dashboard/resources/cheatsheets",
+                },
+                {
+                    title: "Company Specific DSA",
+                    url: "/dashboard/resources/company-dsa",
+                },
+                {
+                    title: "Career Guidance Call",
+                    url: "/dashboard/resources/career-call",
                 },
             ],
         },

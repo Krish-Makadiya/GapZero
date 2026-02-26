@@ -15,11 +15,17 @@ import ATSScanner from "./pages/ResumeAI/ATSScanner";
 import ResumeBuilder from "./pages/ResumeAI/ResumeBuilder";
 import CoverLetters from "./pages/ResumeAI/CoverLetters";
 import ResumeVersions from "./pages/ResumeAI/ResumeVersions";
+import YourOutreachs from "./pages/ColdOutreach/YourOutreachs";
+import ColdEmailTemplates from "./pages/ColdOutreach/ColdEmailTemplates";
+import CheatSheets from "./pages/Resources/CheatSheets";
+import CompanyDSA from "./pages/Resources/CompanyDSA";
+import CareerCall from "./pages/Resources/CareerCall";
+
 
 const App = () => {
     return (
         <Routes>
-            <Route path="/" element={<Landing />} />    
+            <Route path="/" element={<Landing />} />
 
             <Route path="/onboarding" element={
                 <ProtectedRoute>
@@ -79,19 +85,51 @@ const App = () => {
                         <ATSScanner />
                     </ProtectedRoute>
                 } />
-                {/* <Route path="resume-builder" element={
+
+                <Route path="resume-builder" element={
                     <ProtectedRoute>
                         <ResumeBuilder />
-                    </ProtectedRoute>
-                } />
-                <Route path="cover-letters" element={
-                    <ProtectedRoute>
-                        <CoverLetters />
                     </ProtectedRoute>
                 } />
                 <Route path="resume-versions" element={
                     <ProtectedRoute>
                         <ResumeVersions />
+                    </ProtectedRoute>
+                } />
+
+                <Route path="cold-outreach/your-outreachs" element={
+                    <ProtectedRoute>
+                        <YourOutreachs />
+                    </ProtectedRoute>
+                } />
+
+                <Route path="cold-outreach/templates" element={
+                    <ProtectedRoute>
+                        <ColdEmailTemplates />
+                    </ProtectedRoute>
+                } />
+
+                <Route path="resources/cheatsheets" element={
+                    <ProtectedRoute>
+                        <CheatSheets />
+                    </ProtectedRoute>
+                } />
+
+                <Route path="resources/company-dsa" element={
+                    <ProtectedRoute>
+                        <CompanyDSA />
+                    </ProtectedRoute>
+                } />
+
+                <Route path="resources/career-call" element={
+                    <ProtectedRoute>
+                        <CareerCall />
+                    </ProtectedRoute>
+                } />
+
+                {/* <Route path="cover-letters" element={
+                    <ProtectedRoute>
+                        <CoverLetters />
                     </ProtectedRoute>
                 } /> */}
             </Route>
