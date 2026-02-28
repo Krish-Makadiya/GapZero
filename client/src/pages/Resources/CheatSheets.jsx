@@ -86,10 +86,9 @@ const CheatSheets = () => {
     );
 
     const handleDownload = (file, fileName) => {
-        // Determine absolute path or use relative if served statically
         const link = document.createElement('a');
         link.href = file;
-        link.download = fileName; // Optional: specify filename
+        link.download = fileName;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -100,74 +99,85 @@ const CheatSheets = () => {
     };
 
     return (
-        <div className="flex-1 w-full px-10 space-y-6 pt-6 mb-10">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex-1 w-full px-10 space-y-6 pt-6 mb-10 overflow-y-auto">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-2">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Roadmaps</h2>
-                    <p className="text-muted-foreground mt-1">
-                        Curated tech roadmaps to help you navigate your learning path and master your chosen field.
+                    <h2 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent italic">
+                        The Developer's Vault
+                    </h2>
+                    <p className="text-muted-foreground mt-2 max-w-xl">
+                        Turbocharge your learning with curated roadmaps, cheat sheets, and technical deep-dives.
                     </p>
                 </div>
-                <div className="relative">
+
+            </div>
+
+            <div className="flex justify-end pt-2">
+                <div className="relative group w-full md:w-[350px]">
                     <input
                         type="text"
-                        placeholder="Search..."
+                        placeholder="Search roadmaps by title or category..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full md:w-[250px] h-10 pl-3 pr-3 text-sm rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                        className="w-full h-12 pl-4 pr-4 text-sm rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all duration-300 shadow-sm"
                     />
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredSheets.map((sheet) => (
-                    <Card key={sheet.id} className="flex flex-col h-full overflow-hidden hover:shadow-lg transition-all duration-300 group border-muted/60">
-                        <div className={`h-28 w-full ${sheet.bgColor} flex items-center justify-center relative overflow-hidden`}>
-                            <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,transparent)]" />
-                            <sheet.icon className={`w-12 h-12 ${sheet.color} transform group-hover:scale-110 transition-transform duration-300`} />
-                        </div>
-
-                        <CardHeader className="pt-4 pb-2">
-                            <div className="flex justify-between items-start mb-2">
-                                <Badge variant="secondary" className="text-xs font-normal">
-                                    {sheet.category}
-                                </Badge>
+                {filteredSheets.map((sheet) => {
+                    const Icon = sheet.icon;
+                    return (
+                        <Card key={sheet.id} className="flex flex-col h-full overflow-hidden hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 group border-neutral-200 dark:border-neutral-800 rounded-3xl bg-white dark:bg-neutral-900">
+                            <div className={`h-32 w-full ${sheet.bgColor} flex items-center justify-center relative overflow-hidden transition-all duration-500 group-hover:h-36`}>
+                                <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,transparent)]" />
+                                <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white dark:from-neutral-900 to-transparent" />
+                                <Icon className={`w-14 h-14 ${sheet.color} transform group-hover:scale-125 group-hover:rotate-6 transition-all duration-500 z-10`} />
                             </div>
-                            <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors">
-                                {sheet.title}
-                            </h3>
-                        </CardHeader>
 
-                        <CardContent className="flex-1 pb-4">
-                            <p className="text-sm text-muted-foreground line-clamp-3">
-                                {sheet.description}
-                            </p>
-                        </CardContent>
+                            <CardHeader className="pt-2 pb-2">
+                                <div className="flex justify-between items-start mb-2">
+                                    <Badge variant="secondary" className="text-[10px] uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-lg">
+                                        {sheet.category}
+                                    </Badge>
+                                </div>
+                                <h3 className="font-extrabold text-xl leading-tight group-hover:text-primary transition-colors">
+                                    {sheet.title}
+                                </h3>
+                            </CardHeader>
 
-                        <CardFooter className="pt-0 pb-4 px-4 flex gap-2">
-                            <Button
-                                variant="outline"
-                                className="flex-1 gap-2 border-primary/20 hover:bg-primary/5 hover:text-primary"
-                                onClick={() => handleView(sheet.file)}
-                            >
-                                <Eye className="w-4 h-4" />
-                                View
-                            </Button>
-                            <Button
-                                className="flex-1 gap-2"
-                                onClick={() => handleDownload(sheet.file, `${sheet.id}-cheatsheet.pdf`)}
-                            >
-                                <Download className="w-4 h-4" />
-                                Download
-                            </Button>
-                        </CardFooter>
-                    </Card>
-                ))}
+                            <CardContent className="flex-1 pb-4">
+                                <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed italic">
+                                    {sheet.description}
+                                </p>
+                            </CardContent>
+
+                            <CardFooter className="pt-0 pb-6 px-6 flex gap-3">
+                                <Button
+                                    variant="outline"
+                                    className="flex-1 gap-2 border-neutral-200 dark:border-neutral-800 rounded-2xl hover:bg-primary/5 hover:text-primary hover:border-primary/20 transition-all duration-300"
+                                    onClick={() => handleView(sheet.file)}
+                                >
+                                    <Eye className="w-4 h-4" />
+                                    View
+                                </Button>
+                                <Button
+                                    className="flex-1 gap-2 rounded-2xl shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all duration-300"
+                                    onClick={() => handleDownload(sheet.file, `${sheet.id}-cheatsheet.pdf`)}
+                                >
+                                    <Download className="w-4 h-4" />
+                                    Fetch
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    );
+                })}
             </div>
 
             {filteredSheets.length === 0 && (
-                <div className="text-center py-12">
-                    <p className="text-muted-foreground">No cheat sheets found matching your search.</p>
+                <div className="text-center py-24 bg-neutral-100/50 dark:bg-neutral-800/20 rounded-3xl border-2 border-dashed border-neutral-200 dark:border-neutral-800">
+                    <Laptop className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+                    <p className="text-muted-foreground font-medium text-lg italic">No treasure found matching your search. Try another path.</p>
                 </div>
             )}
         </div>

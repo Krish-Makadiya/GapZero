@@ -8,6 +8,7 @@ import JobPreferences from "./pages/Settings/JobPreferences";
 import MyAccount from "./pages/Settings/MyAccount";
 import MyProfile from "./pages/Settings/MyProfile";
 import CourseSuggestions from "./pages/Careers/CourseSuggestions";
+import JobExplorer from "./pages/Careers/JobExplorer";
 import AcceptedJobs from "./pages/Careers/AcceptedJobs";
 import RejectedJobs from "./pages/Careers/RejectedJobs";
 import Roadmaps from "./pages/Careers/Roadmaps";
@@ -15,11 +16,10 @@ import ATSScanner from "./pages/ResumeAI/ATSScanner";
 import ResumeBuilder from "./pages/ResumeAI/ResumeBuilder";
 import CoverLetters from "./pages/ResumeAI/CoverLetters";
 import ResumeVersions from "./pages/ResumeAI/ResumeVersions";
-import YourOutreachs from "./pages/ColdOutreach/YourOutreachs";
-import ColdEmailTemplates from "./pages/ColdOutreach/ColdEmailTemplates";
 import CheatSheets from "./pages/Resources/CheatSheets";
 import CompanyDSA from "./pages/Resources/CompanyDSA";
 import CareerCall from "./pages/Resources/CareerCall";
+import AcademicHub from "./pages/AcaemicHub/AcademicHub";
 
 
 const App = () => {
@@ -63,6 +63,16 @@ const App = () => {
                         <CourseSuggestions />
                     </ProtectedRoute>
                 } />
+                <Route path="job-explorer" element={
+                    <ProtectedRoute>
+                        <JobExplorer />
+                    </ProtectedRoute>
+                } />
+                <Route path="academic-hub" element={
+                    <ProtectedRoute>
+                        <AcademicHub />
+                    </ProtectedRoute>
+                } />
                 <Route path="accepted-jobs" element={
                     <ProtectedRoute>
                         <AcceptedJobs />
@@ -94,18 +104,6 @@ const App = () => {
                 <Route path="resume-versions" element={
                     <ProtectedRoute>
                         <ResumeVersions />
-                    </ProtectedRoute>
-                } />
-
-                <Route path="cold-outreach/your-outreachs" element={
-                    <ProtectedRoute>
-                        <YourOutreachs />
-                    </ProtectedRoute>
-                } />
-
-                <Route path="cold-outreach/templates" element={
-                    <ProtectedRoute>
-                        <ColdEmailTemplates />
                     </ProtectedRoute>
                 } />
 

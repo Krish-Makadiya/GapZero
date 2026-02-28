@@ -4,13 +4,48 @@ import axios from 'axios';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, BookOpen, MapPin, Building2, Calendar, Loader2, Sparkles, GraduationCap, CheckCircle2, Target } from 'lucide-react';
+import { ExternalLink, BookOpen, MapPin, Building2, Calendar, Loader2, Sparkles, GraduationCap, CheckCircle2, Target, Play, Video, AlertCircle, Brain, FileText } from 'lucide-react';
 import { motion } from "framer-motion";
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetDescription,
+} from "@/components/ui/sheet";
+import ReactMarkdown from 'react-markdown';
 
 const CourseSuggestions = () => {
     const { user, isLoaded } = useUser();
     const [savedJobs, setSavedJobs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [fetchingLesson, setFetchingLesson] = useState(null);
+    const [lessonData, setLessonData] = useState(null);
+
+    const [isSheetOpen, setIsSheetOpen] = useState(false);
+    console.log("Lesson Data:", lessonData);
+
+    const handleFetchMicroLesson = async (skill) => {
+        setFetchingLesson(skill);
+        setIsSheetOpen(true);
+        setLessonData(null);
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_SERVER_API}/api/resources/get-micro-lesson`, {
+                missingSkill: skill
+            });
+            if (res.data.success) {
+                console.log("Fetched Lesson Data:", res.data);
+                setLessonData(res.data);
+            } else {
+                setLessonData({ error: res.data.message || "Failed to load lesson." });
+            }
+        } catch (error) {
+            console.error("Failed to fetch lesson:", error);
+            setLessonData({ error: "Server connection lost. Please try again." });
+        } finally {
+            setFetchingLesson(null);
+        }
+    };
 
     useEffect(() => {
         const fetchSavedJobs = async () => {
@@ -191,15 +226,25 @@ const CourseSuggestions = () => {
                                                                 </p>
                                                             </div>
 
-                                                            <a
-                                                                href={rec.udemy_search_url}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 flex items-center gap-1.5 mt-auto group-hover:translate-x-1 transition-transform"
-                                                            >
-                                                                Find courses on Udemy
-                                                                <ExternalLink className="w-3 h-3" />
-                                                            </a>
+                                                            <div className="flex items-center justify-between mt-auto pt-2">
+                                                                <a
+                                                                    href={rec.udemy_search_url}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-xs font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 flex items-center gap-1.5 transition-colors"
+                                                                >
+                                                                    Udemy Courses <ExternalLink className="w-3 h-3" />
+                                                                </a>
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    className="h-7 px-2 text-[10px] gap-1 group/cheat border-primary/20 hover:bg-primary/10 hover:text-primary hover:border-primary/50 rounded-lg"
+                                                                    onClick={() => handleFetchMicroLesson(rec.skill)}
+                                                                >
+                                                                    <Play className="w-3 h-3 transition-transform group-hover/cheat:scale-110" />
+                                                                    Micro Cheat
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -217,6 +262,112 @@ const CourseSuggestions = () => {
                     </motion.div>
                 )}
             </div>
+
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+                <SheetContent side="right" className="sm:max-w-xl w-full p-0 overflow-y-auto bg-white dark:bg-neutral-900 border-l border-neutral-200 dark:border-neutral-800">
+                    <div className="p-6">
+                        <SheetHeader className="mb-6">
+                            <SheetTitle className="text-2xl font-bold flex items-center gap-2">
+                                <Sparkles className="w-6 h-6 text-primary" />
+                                AI Micro-Lesson
+                            </SheetTitle>
+                            <SheetDescription>
+                                Laser-focused learning powered by Gemini AI.
+                            </SheetDescription>
+                        </SheetHeader>
+
+                        {fetchingLesson ? (
+                            <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                                <Loader2 className="w-10 h-10 animate-spin text-primary" />
+                                <p className="text-muted-foreground animate-pulse text-center">
+                                    Synthesizing transcript and finding the perfect segment for <br />
+                                    <span className="text-primary font-bold">{fetchingLesson}</span>...
+                                </p>
+                            </div>
+                        ) : lessonData?.error ? (
+                            <div className="flex flex-col items-center justify-center py-20 space-y-4 px-6 text-center">
+                                <AlertCircle className="w-12 h-12 text-red-500" />
+                                <h3 className="text-lg font-bold">Concept Search Failed</h3>
+                                <p className="text-muted-foreground text-sm">
+                                    {lessonData.error}
+                                </p>
+                                <Button onClick={() => setIsSheetOpen(false)} variant="outline" className="mt-4">
+                                    Close and Try Another
+                                </Button>
+                            </div>
+                        ) : lessonData ? (
+                            <div className="space-y-6">
+                                <div className="aspect-video w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-neutral-200 dark:border-neutral-800">
+                                    <iframe
+                                        src={lessonData.embedUrl}
+                                        className="w-full h-full"
+                                        title={lessonData.videoTitle}
+                                        frameBorder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                    />
+                                </div>
+
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-start">
+                                        <div className="space-y-1">
+                                            <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/10">
+                                                Topic: {lessonData.skill}
+                                            </Badge>
+                                            <h3 className="text-xl font-bold leading-tight">{lessonData.videoTitle}</h3>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="text-sm font-bold text-primary bg-primary/5 px-3 py-1 rounded-full inline-block">
+                                                {(() => {
+                                                    const formatTime = (s) => {
+                                                        const mins = Math.floor(s / 60);
+                                                        const secs = s % 60;
+                                                        return `${mins}:${secs.toString().padStart(2, '0')}`;
+                                                    };
+                                                    return `${formatTime(lessonData.start)} - ${formatTime(lessonData.end)}`;
+                                                })()}
+                                            </div>
+                                            <p className="text-[10px] text-muted-foreground mt-1 tracking-wider uppercase font-medium">Selected Segment</p>
+                                        </div>
+                                    </div>
+
+
+                                    {/* AI Markdown Revision Notes */}
+                                    {lessonData.revisionNotes && (
+                                        <div className="space-y-4 pt-2">
+                                            <div className="flex items-center gap-2 text-sm font-bold text-neutral-900 dark:text-neutral-100 border-b border-neutral-100 dark:border-neutral-800 pb-2 mb-4">
+                                                <FileText className="w-4 h-4 text-primary" />
+                                                📝 AI Revision Notes
+                                            </div>
+
+                                            <div className="prose prose-sm dark:prose-invert max-w-none text-neutral-600 dark:text-neutral-400 prose-headings:text-primary prose-strong:text-neutral-900 dark:prose-strong:text-white prose-code:bg-neutral-100 dark:prose-code:bg-neutral-800 prose-code:p-1 prose-code:rounded prose-code:text-primary">
+                                                <ReactMarkdown>
+                                                    {lessonData.revisionNotes}
+                                                </ReactMarkdown>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="pt-4 flex gap-3">
+                                        <Button
+                                            className="flex-1 gap-2 rounded-xl"
+                                            onClick={() => window.open(`https://youtube.com/watch?v=${lessonData.videoId}`, "_blank")}
+                                        >
+                                            <Play className="w-4 h-4 fill-current" />
+                                            Watch Full Tutorial
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="text-center py-20 text-muted-foreground">
+                                <AlertCircle className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                                <p>Something went wrong fetching the lesson.</p>
+                            </div>
+                        )}
+                    </div>
+                </SheetContent>
+            </Sheet>
         </div>
     );
 }

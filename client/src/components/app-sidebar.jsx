@@ -48,6 +48,10 @@ const data = {
             icon: GraduationCap,
             items: [
                 {
+                    title: "Job Explorer",
+                    url: "/dashboard/job-explorer",
+                },
+                {
                     title: "Course Suggestions",
                     url: "/dashboard/course-suggestions",
                 },
@@ -55,6 +59,10 @@ const data = {
                     title: "Roadmaps",
                     url: "/dashboard/roadmaps",
                 },
+                {
+                    title: "Academic Hub",
+                    url: "/dashboard/academic-hub",
+                }
             ],
         },
         {
@@ -78,21 +86,6 @@ const data = {
                     title: "Version History",
                     url: "/dashboard/resume-versions",
                 }
-            ],
-        },
-        {
-            title: "Cold Outreach",
-            url: "#",
-            icon: Send,
-            items: [
-                {
-                    title: "Your Outreachs",
-                    url: "/dashboard/cold-outreach/your-outreachs",
-                },
-                {
-                    title: "Cold Emails Template",
-                    url: "/dashboard/cold-outreach/templates",
-                },
             ],
         },
         {
